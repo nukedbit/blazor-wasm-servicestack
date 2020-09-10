@@ -5,10 +5,10 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": "Launch and Debug Standalone Blazor WebAssembly App",
+            "name": "Launch and Debug Blazor WebAssembly",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/MyApp.Client"
+            "cwd": "${workspaceFolder}/MyApp"
         },
         {
             "name": ".NET Core Launch (web)",
@@ -16,10 +16,10 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/MyApp/bin/Debug/netcoreapp3.1/MyApp.dll",
+            "program": "${workspaceFolder}/MyApp/bin/Debug/net5.0/MyApp.dll",
             "args": [],
             "cwd": "${workspaceFolder}/MyApp",
-            "stopAtEntry": false,
+            "stopAtEntry": false,            
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
                 "action": "openExternally",

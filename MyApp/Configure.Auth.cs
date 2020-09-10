@@ -44,7 +44,9 @@ namespace MyApp
                     new FacebookAuthProvider(AppSettings),        /* Create App https://developers.facebook.com/apps */
                     new GoogleAuthProvider(AppSettings),          /* Create App https://console.developers.google.com/apis/credentials */
                     new MicrosoftGraphAuthProvider(AppSettings),  /* Create App https://apps.dev.microsoft.com */
-                }));
+                }){
+                      IncludeDefaultLogin = false
+                });
 
             appHost.Plugins.Add(new RegistrationFeature()); //Enable /register Service
 

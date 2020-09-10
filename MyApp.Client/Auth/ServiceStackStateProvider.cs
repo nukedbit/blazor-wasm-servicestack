@@ -21,8 +21,8 @@ namespace MyApp.Client
     {
         private AuthenticateResponse _authenticationResponse;
         private readonly JsonHttpClient client;
- 
-        ILocalStorageService LocalStorage {get;set;}
+
+        ILocalStorageService LocalStorage { get; set; }
 
         public ServiceStackStateProvider(JsonHttpClient client, ILocalStorageService localStorage)
         {
@@ -69,10 +69,17 @@ namespace MyApp.Client
         public async Task Logout()
         {
             await LocalStorage.RemoveItemAsync("Authentication");
-            await client.PostAsync(new Authenticate()
+            try
             {
-                provider = "logout"
-            });
+                await client.PostAsync(new Authenticate()
+                {
+                    provider = "logout"
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             _authenticationResponse = null;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }

@@ -34,7 +34,7 @@ namespace MyApp.Client
 
             builder.Services.AddScoped<JsonHttpClient>(s =>
             {
-                return BlazorClient.Create("https://localhost:7001");
+                return BlazorClient.Create("https://localhost:5001");
             });
             builder.Services.AddScoped<ServiceStackStateProvider>();
             
