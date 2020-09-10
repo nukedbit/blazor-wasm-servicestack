@@ -1,4 +1,7 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject ServiceStackStateProvider  AuthStateProvider;
+@inject NavigationManager NavigationManager;
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MyApp</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -22,11 +25,18 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </li>
-         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Login
-            </NavLink>
-        </li>
+
+        @if(IsAuthenticated){
+                <li class="nav-item px-3">
+                    <a href="#"  class="nav-link" @onclick="LogoutAsync"><span class="oi oi-account-logout" aria-hidden="true"></span>Logout</a>
+                </li>                
+            }else{
+                <li class="nav-item px-3">
+                  <NavLink class="nav-link" href="@LoginUrl">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
+                </li>
+            }
     </ul>
 </div>
 
@@ -39,4 +49,29 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-}
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected bool IsAuthenticated { get; set; }
+
+    private string LoginUrl { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        LoginUrl = $"/login?return={NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}";
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var state = await authenticationStateTask;
+        IsAuthenticated = state.User.Identity.IsAuthenticated;
+    }
+
+    private async Task LogoutAsync()
+    {
+        await AuthStateProvider.Logout();
+    }
+} 
