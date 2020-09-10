@@ -1,40 +1,67 @@
-using System;
-using System.Net.Http;
-using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Text;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Components.Authorization;
+using Funq;
+using Microsoft.Extensions.Configuration;
 using ServiceStack;
-using Blazored.LocalStorage;
-using Blazor.Extensions.Logging;
+using MyApp.ServiceInterface;
+using MyApp.ServiceModel;
 
 namespace MyApp
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.Services.AddLogging(builder => builder
-                .AddBrowserConsole()
-                .SetMinimumLevel(LogLevel.Trace)
-            );
-            builder.RootComponents.Add<App>("#app");
-            builder.Services.AddOptions();
-            builder.Services.AddAuthorizationCore();
+            typeof(Hello).AddAttributes(new AuthenticateAttribute());
 
-            builder.Services.AddBlazoredLocalStorage(config =>
-               config.JsonSerializerOptions.WriteIndented = true);
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<JsonHttpClient>(s => BlazorClient.Create("https://localhost:7001"));
-            builder.Services.AddScoped<ServiceStackStateProvider>();
-            builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ServiceStackStateProvider>());
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseModularStartup<Startup>()
+                .UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000/")
+                .Build();
 
-            await builder.Build().RunAsync();
+            host.Run();
+        }
+    }
+
+    public class Startup : ModularStartup
+    {
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public new void ConfigureServices(IServiceCollection services)
+        {
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseServiceStack(new AppHost());
+
+            app.Run(context =>
+            {
+                context.Response.Redirect("/metadata");
+                return Task.FromResult(0);
+            });
+        }
+    }
+
+    public class AppHost : AppHostBase
+    {
+        public AppHost()
+            : base("MyApp", typeof(MyServices).Assembly) { }
+
+        public override void Configure(Container container)
+        {
+            Plugins.Add(new CorsFeature(allowedHeaders:"Content-Type,Authorization"));
+
+            
         }
     }
 }

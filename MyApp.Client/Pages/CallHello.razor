@@ -1,0 +1,24 @@
+@page "/callhello"
+@attribute [Authorize()]
+@inherits StackBaseComponent
+@using System.Collections.Generic
+
+<h1>Call Hello</h1>
+
+<p>Protected Service Response: @Response</p>
+ 
+
+<button class="btn btn-primary" @onclick="CallHelloService">Call Hello</button>
+
+@code {
+    private string Response {get;set;}
+ 
+
+    private async Task CallHelloService()
+    {
+
+        var client = await GetClient();
+        var response = await client.GetAsync(new ServiceModel.Hello());
+        Response = response.Result;
+    }
+}
