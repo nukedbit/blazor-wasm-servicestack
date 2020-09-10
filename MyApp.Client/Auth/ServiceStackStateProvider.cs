@@ -61,6 +61,7 @@ namespace MyApp.Client
             catch (HttpRequestException ex)
             {
                 Console.WriteLine("Request failed:" + ex.ToString());
+                await LocalStorage.RemoveItemAsync("Authentication");
             }
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
