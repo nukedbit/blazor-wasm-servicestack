@@ -1,6 +1,8 @@
-# selfhost
+# Blazor WASM & ServiceStack SelfHost
 
-.NET Core 3.1 self-hosting Kestrel Console App
+[![](blazor-wasm-servicestack.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
+
+.NET Core 3.1 self-hosting Kestrel Console App 
 
 [![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/selfhost.png)](http://selfhost.web-templates.io/)
 
