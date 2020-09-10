@@ -1,0 +1,50 @@
+@inherits LayoutComponentBase
+@inject ServiceStackStateProvider  AuthStateProvider;
+@inject NavigationManager NavigationManager;
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            
+            @if(IsAuthenticated){
+                <a href="#"  class="ml-md-auto button" @onclick="LogoutAsync">Logout</a>
+            }else{
+                <a href=$"/login?return={NavigationManager.Uri}"  class="ml-md-auto button" @onclick="Login">Login</a>
+            }
+
+            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+        </div>
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected bool IsAuthenticated {get;set;} 
+
+    private string LoginUrl { get;set;}   
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await authenticationStateTask;
+        IsAuthenticated = state.User.Identity.IsAuthenticated;
+    }
+
+    private async Task LogoutAsync() {
+        await AuthStateProvider.Logout();
+    }
+
+    private void Login() {
+        NavigationManager.NavigateTo("/login");
+    }
+}    

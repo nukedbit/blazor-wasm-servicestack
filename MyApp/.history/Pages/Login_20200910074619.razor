@@ -1,0 +1,19 @@
+@page "/login"
+@inject ServiceStackStateProvider provider
+<input type="text" placeholder="email" @bind-value="@Email"/>
+<input type="password" placeholder="password" @bind-value="@Password"/>
+
+<input type="button" @onclick="LoginAsync"/>
+
+
+@code {
+    private string Email { get; set; }
+    private string Password { get; set; }
+
+    
+
+    private async Task LoginAsync()
+    {
+        await provider.Login(Email, Password);
+    }
+}

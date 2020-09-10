@@ -1,0 +1,23 @@
+@page "/login"
+
+<input type="text" placeholder="email" @bind-value="@Email"/>
+<input type="password" placeholder="password" value="@Password"/>
+
+<input type="button" @onclick="LoginAsync"/>
+
+
+@code {
+
+    private string Email {get;set;}
+    private string Password {get;set;}
+
+    private async Task LoginAsync()
+    {
+        var client = BlazorClient.Create("https://localhost:5001");
+        var response = await client.PostAsync(new Authenticate(){
+            provider = "credentials",
+            UserName = Email,
+            Password = Password
+        });
+    }
+}
