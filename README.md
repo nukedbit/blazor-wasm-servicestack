@@ -34,6 +34,10 @@ Inside the client project you can see this.
 
 Maybe i will make this automatically get the base url in the future, any contribution is appreciated :).
 
+## Code Sharing
+
+Right now I have got dto sharing by using ``MyApp.ServiceModel`` project with success as suggested on [Physical Project Structure](https://docs.servicestack.net/physical-project-structure)
+
 ## Running your app
 
 There are two launch profiles for VSCode, the firt one it will launch the app with blazor debugging, the other one it will launch only the WebHost Debugging.
