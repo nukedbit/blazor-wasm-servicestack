@@ -51,7 +51,7 @@ If you don't know ServiceStack give it a try it come with a AGPL 3 license, but 
 Check the following links for more info
 
 
-## Executing Blazor and ServiceStack as a Desktop app
+## Executing Blazor and ServiceStack as a Standalone Desktop app
 
 [@mythz](https://github.com/mythz) Published an update to the [app dotnet tool](https://docs.servicestack.net/netcore-windows-desktop) that allow you to embedd this in a Windows Chromium Desktop App very easily with the latest v0.0.81+ app tool.
 
