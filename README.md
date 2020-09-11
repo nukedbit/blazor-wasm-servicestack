@@ -66,7 +66,7 @@ When it will launch this is the end result.
 
 [![](blazor-servicestack-desktop-app.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
 
-As he suggested [here] (https://forums.servicestack.net/t/blazor-web-assembly-template/8950/4)
+As he suggested [here](https://forums.servicestack.net/t/blazor-web-assembly-template/8950/4)
 
 You can also create a Windows Desktop Shortcut.
 
