@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Extensions;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using ServiceStack;
 
