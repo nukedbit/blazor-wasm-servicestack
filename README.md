@@ -77,6 +77,7 @@ You can also create a Windows Desktop Shortcut.
 
 * https://docs.servicestack.net 
 * https://servicestack.net 
-
+* [ASP.NET Core updates in .NET 5 Release Candidate 1](https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-5-release-candidate-1/)
+* [Announcing .NET 5.0 RC 1](https://devblogs.microsoft.com/dotnet/announcing-net-5-0-rc-1/)
 
 
