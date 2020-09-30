@@ -18,18 +18,7 @@ namespace MyApp
     {
         public static void Main(string[] args)
         {
-          
-
-
             CreateWebHostBuilder(args).Build().Run();
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseModularStartup<Startup>()
-                .UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000/")
-                .Build();
-
-            host.Run();
         }
 
         public static IHostBuilder CreateWebHostBuilder(string[] args) =>
