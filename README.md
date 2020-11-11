@@ -2,7 +2,7 @@
 
 # Blazor WASM & ServiceStack for .NET 5.0 RTM
 
-This template integrate ServiceStack with Blazor on .NET 5 RTM and ServiceStack 5.10.1.
+This template integrate ServiceStack with Blazor on .NET 5 RTM and [ServiceStack 5.10.1](https://docs.servicestack.net/releases/v5.10).
 The blazor wasm app is served through the main ServiceStack web host so you can deploy a single package with both api and client ux.
 
 ## Quick Start 
