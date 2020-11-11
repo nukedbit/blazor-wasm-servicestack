@@ -1,8 +1,8 @@
 [![](blazor-wasm-servicestack.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
 
-# Blazor WASM & ServiceStack for .NET 5
+# Blazor WASM & ServiceStack for .NET 5.0 RTM
 
-This template integrate ServiceStack with Blazor on .NET 5 RC1 and ServiceStack 5.9.3 (currently on preview).
+This template integrate ServiceStack with Blazor on .NET 5 RTM and ServiceStack 5.10.1.
 The blazor wasm app is served through the main ServiceStack web host so you can deploy a single package with both api and client ux.
 
 ## Quick Start 
@@ -77,7 +77,6 @@ You can also create a Windows Desktop Shortcut.
 
 * https://docs.servicestack.net 
 * https://servicestack.net 
-* [ASP.NET Core updates in .NET 5 Release Candidate 1](https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-5-release-candidate-1/)
-* [Announcing .NET 5.0 RC 1](https://devblogs.microsoft.com/dotnet/announcing-net-5-0-rc-1/)
+* [Announcing ASP.NET Core in .NET 5](https://devblogs.microsoft.com/aspnet/announcing-asp-net-core-in-net-5/)
 
 
