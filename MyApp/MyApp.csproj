@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.0" />
-    <PackageReference Include="ServiceStack" Version="5.10.1" />
-    <PackageReference Include="ServiceStack.OrmLite.Sqlite" Version="5.10.1" />
-    <PackageReference Include="ServiceStack.Server" Version="5.10.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.2" />
+    <PackageReference Include="ServiceStack" Version="5.10.5" />
+    <PackageReference Include="ServiceStack.OrmLite.Sqlite" Version="5.10.5" />
+    <PackageReference Include="ServiceStack.Server" Version="5.10.5" />
   </ItemGroup>
 
   <ItemGroup>

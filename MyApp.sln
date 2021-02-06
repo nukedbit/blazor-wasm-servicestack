@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyApp.Tests", "MyApp.Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyApp.Client", "MyApp.Client\MyApp.Client.csproj", "{320C1E1A-F198-420D-88DF-2D929A656551}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{672D91B4-2CE5-43CA-9AEF-66E6884A6E0D}"
+ProjectSection(SolutionItems) = preProject
+	NuGet.Config = NuGet.Config
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
