@@ -32,7 +32,7 @@ namespace MyApp.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ServiceStackStateProvider>());
 
-            builder.Services.AddScoped(_ => BlazorClient.Create("https://localhost:5001"));
+            builder.Services.AddScoped(_ => BlazorClient.Create(builder.HostEnvironment.BaseAddress));
             builder.Services.AddScoped<ServiceStackStateProvider>();
             
 
