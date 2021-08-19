@@ -3,13 +3,13 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-  <PackageReference Include="ServiceStack.HttpClient" Version="5.11.1" />
+  <PackageReference Include="ServiceStack.HttpClient" Version="5.12.1" />
   <PackageReference Include="Blazored.LocalStorage" Version="4.1.2" />
   <PackageReference Include="Blazor.Extensions.Logging" Version="2.0.4" /> 
-  <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.0-preview.5.21301.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.5.21301.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.5.21301.17" PrivateAssets="all" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.5.21301.5" />
+  <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.0-preview.7.21378.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.7.21378.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.7.21378.6" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.7.21377.19" />
     <ProjectReference Include="..\MyApp.ServiceModel\MyApp.ServiceModel.csproj" />
   </ItemGroup>
 
