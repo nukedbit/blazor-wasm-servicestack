@@ -17,7 +17,7 @@
     private async Task CallHelloService()
     {
 
-        var client = await GetClient();
+        var client = await GetClientAsync();
         var response = await client.GetAsync(new ServiceModel.Hello() {
             Name = "World"
         });

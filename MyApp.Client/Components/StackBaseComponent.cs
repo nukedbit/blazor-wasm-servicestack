@@ -16,7 +16,7 @@ namespace MyApp.Client
         [Inject]
         private JsonHttpClient Client {get;set;}
 
-        protected async Task<JsonHttpClient> GetClient() {
+        protected async Task<JsonHttpClient> GetClientAsync() {
             var state = await AuthenticationStateTask;
             if(state.User is ClaimsPrincipal principal && principal.Identity.IsAuthenticated){
                 Client.BearerToken = principal.Claims.Where(c => c.Type == "token").FirstOrDefault()?.Value;
