@@ -1,8 +1,8 @@
 [![](blazor-wasm-servicestack.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
 
-# Blazor WASM & ServiceStack for .NET 6.0 preview-4
+# Blazor WASM & ServiceStack for .NET 6.0 preview-7
 
-This template integrate ServiceStack with Blazor on .NET 6 preview-4 and [ServiceStack 5.11](https://docs.servicestack.net/releases/v5.11).
+This template integrate ServiceStack with Blazor on .NET 6 preview-7 and [ServiceStack 5.12](https://docs.servicestack.net/releases/v5.12).
 
 The blazor wasm app is served through the main ServiceStack web host so you can deploy a single package with both api and client ux.
 
