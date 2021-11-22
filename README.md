@@ -1,8 +1,9 @@
 [![](blazor-wasm-servicestack.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
 
-# Blazor WASM & ServiceStack for .NET 5.0 RTM
+# Blazor WASM & ServiceStack for .NET 6.0 RTM
 
-This template integrate ServiceStack with Blazor on .NET 5 RTM and [ServiceStack 5.12](https://docs.servicestack.net/releases/v5.12).
+This template integrate ServiceStack with Blazor on .NET 6 RTM and [ServiceStack 5.13](https://docs.servicestack.net/releases/v5.13).
+
 
 The blazor wasm app is served through the main ServiceStack web host so you can deploy a single package with both api and client ux.
 
@@ -60,7 +61,7 @@ Check the following links for more info
     $ x new nukedbit/blazor-wasm-servicestack Acme
     $ cd Acme\Acme
     $ dotnet public -c Release
-    $ cd bin\Release\net5.0\publish
+    $ cd bin\Release\net6.0\publish
     $ app Acme.dll
 
 When it will launch this is the end result.
@@ -78,6 +79,5 @@ You can also create a Windows Desktop Shortcut.
 
 * https://docs.servicestack.net 
 * https://servicestack.net 
-* [Announcing ASP.NET Core in .NET 5](https://devblogs.microsoft.com/aspnet/announcing-asp-net-core-in-net-5/)
 
 

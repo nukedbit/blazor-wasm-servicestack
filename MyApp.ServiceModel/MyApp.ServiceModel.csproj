@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ServiceStack.Interfaces" Version="5.12.1" />
+    <PackageReference Include="ServiceStack.Interfaces" Version="5.13.3" />
   </ItemGroup>
 
   <ItemGroup>

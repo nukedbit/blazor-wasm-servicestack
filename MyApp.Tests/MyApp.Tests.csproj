@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-     <TargetFramework>net5.0</TargetFramework>
+     <TargetFramework>net6.0</TargetFramework>
     <DebugType>portable</DebugType>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -11,10 +11,10 @@
     <ProjectReference Include="..\MyApp.ServiceModel\MyApp.ServiceModel.csproj" />
 
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="ServiceStack" Version="5.12.1" />
-    <PackageReference Include="ServiceStack.Kestrel" Version="5.12.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="ServiceStack" Version="5.13.3" />
+    <PackageReference Include="ServiceStack.Kestrel" Version="5.13.3" />
   </ItemGroup>
 
 </Project>
