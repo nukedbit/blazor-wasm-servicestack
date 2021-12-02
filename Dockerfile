@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /app
 
-COPY ./api .
+COPY ./ .
 RUN dotnet restore
 
 WORKDIR /app/MyApp
