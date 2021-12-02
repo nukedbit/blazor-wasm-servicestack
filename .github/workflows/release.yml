@@ -40,8 +40,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0'
-          include-prerelease: true
+
       - name: Call DEPLOY_ACTION MSBuild Task
+        working-directory: ./MyApp
         run: dotnet msbuild -target:DEPLOY_ACTION /p:DEPLOY_API=${{ env.deploy_api }} /p:DEPLOY_CDN=${{ env.deploy_cdn }}
 
       # Assign environment variables used in subsequent steps
