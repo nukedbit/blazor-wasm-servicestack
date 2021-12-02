@@ -22,10 +22,10 @@
 
     <!-- Called in release.yml with GitHub Actions secrets -->
     <Target Name="DEPLOY_ACTION">
-        <Exec Command="ECHO DEPLOY_ACTION: DEPLOY_API=$(DEPLOY_API),DEPLOY_CDN=$(DEPLOY_CDN)" />
+        <Exec Command="echo DEPLOY_ACTION: DEPLOY_API=$(DEPLOY_API),DEPLOY_CDN=$(DEPLOY_CDN)" />
 
         <!-- Define custom domain name that CDN should use -->
-        <Exec Condition="$(DEPLOY_CDN) != ''" Command="ECHO $(DEPLOY_CDN) > $(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/CNAME" />
+        <Exec Condition="$(DEPLOY_CDN) != ''" Command="echo $(DEPLOY_CDN) > $(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/CNAME" />
         <!-- Allow CORS from DEPLOY_CDN -->
         <WriteLinesToFile Condition="$(DEPLOY_CDN) != ''"
             File="$(MSBuildProjectDirectory)/Configure.AppHost.cs"
