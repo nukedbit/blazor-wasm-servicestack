@@ -11,8 +11,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0'
-        include-prerelease: true
     - name: Build
-      run: dotnet build ./api
+      run: dotnet build
     - name: Test
-      run: dotnet test ./api/MyApp.Tests
+      run: dotnet test ./MyApp.Tests

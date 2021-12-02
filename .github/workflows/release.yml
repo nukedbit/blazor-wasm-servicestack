@@ -80,7 +80,7 @@ jobs:
       - name: Deploy to GitHub Pages
         if: ${{ env.deploy_cdn != '' }}
         run: |
-          cd ./api/MyApp/wwwroot
+          cd ./MyApp/bin/Release/net6.0/publish/wwwroot
           git init
           git add -A
           git config --local user.email "action@github.com"
@@ -92,7 +92,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           force: true
-          directory: ./api/MyApp/wwwroot
+          directory: ./MyApp/bin/Release/net6.0/publish/wwwroot
 
   deploy_via_ssh:
     needs: push_to_registry
