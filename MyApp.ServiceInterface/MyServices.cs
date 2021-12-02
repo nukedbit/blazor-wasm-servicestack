@@ -1,14 +1,16 @@
-﻿using System;
-using ServiceStack;
+﻿using ServiceStack;
 using MyApp.ServiceModel;
 
-namespace MyApp.ServiceInterface
+namespace MyApp.ServiceInterface;
+
+public class MyServices : Service
 {
-    public class MyServices : Service
+    public object Any(Hello request)
     {
-        public object Any(Hello request)
-        {
-            return new HelloResponse { Result = $"Hello, {request.Name}!" };
-        }
+        return new HelloResponse { Result = $"Hello, {request.Name}!" };
+    }
+    public object Any(HelloSecure request)
+    {
+        return new HelloResponse { Result = $"Hello, {request.Name}!" };
     }
 }

@@ -1,0 +1,24 @@
+@page "/callhellosecure"
+@attribute [Authorize()]
+@inherits StackBaseComponent
+@using System.Collections.Generic
+
+<h1>Call HelloSecure</h1>
+
+<p>Protected API Response: @Response</p>
+
+<button class="btn btn-primary" @onclick="CallHelloSecureService">Call HelloSecure</button>
+
+@code {
+    private string Response { get; set; }
+
+    private async Task CallHelloSecureService()
+    {
+
+        var client = await GetClientAsync();
+        var response = await client.GetAsync(new HelloSecure {
+            Name = "World"
+        });
+        Response = response.Result;
+    }
+}

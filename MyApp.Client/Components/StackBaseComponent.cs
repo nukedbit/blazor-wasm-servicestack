@@ -5,23 +5,24 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using ServiceStack;
 
-namespace MyApp.Client
+namespace MyApp.Client;
+
+public abstract class StackBaseComponent : ComponentBase
 {
-    public abstract class StackBaseComponent : ComponentBase
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+
+    [Inject]
+    private JsonHttpClient Client { get; set; }
+
+    protected async Task<JsonHttpClient> GetClientAsync()
     {
-        [CascadingParameter]
-        protected Task<AuthenticationState> AuthenticationStateTask { get; set; }
-
-
-        [Inject]
-        private JsonHttpClient Client {get;set;}
-
-        protected async Task<JsonHttpClient> GetClientAsync() {
-            var state = await AuthenticationStateTask;
-            if(state.User is ClaimsPrincipal principal && principal.Identity.IsAuthenticated){
-                Client.BearerToken = principal.Claims.Where(c => c.Type == "token").FirstOrDefault()?.Value;
-            }
-            return Client;
+        var state = await AuthenticationStateTask;
+        if (state.User is ClaimsPrincipal principal && principal.Identity?.IsAuthenticated == true)
+        {
+            Client.BearerToken = principal.Claims.FirstOrDefault(c => c.Type == "token")?.Value;
         }
+        return Client;
     }
 }

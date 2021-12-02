@@ -1,16 +1,21 @@
 ﻿using ServiceStack;
 
-namespace MyApp.ServiceModel
-{
-    [Route("/hello")]
-    [Route("/hello/{Name}")] 
-    public class Hello : IReturn<HelloResponse>
-    {
-        public string Name { get; set; }
-    }
+namespace MyApp.ServiceModel;
 
-    public class HelloResponse
-    {
-        public string Result { get; set; }
-    }
+[Route("/hello/{Name}")]
+public class Hello : IReturn<HelloResponse>
+{
+    public string Name { get; set; }
+}
+
+[Route("/hellosecure/{Name}")]
+[ValidateIsAuthenticated]
+public class HelloSecure : IReturn<HelloResponse>
+{
+    public string Name { get; set; }
+}
+
+public class HelloResponse
+{
+    public string Result { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿@inject ServiceStackStateProvider  AuthStateProvider;
+﻿@inject ServiceStackStateProvider AuthStateProvider;
 @inject NavigationManager NavigationManager;
 
 <div class="top-row pl-4 navbar navbar-dark">
@@ -24,24 +24,32 @@
             <NavLink class="nav-link" href="callhello">
                 <span class="oi oi-plus" aria-hidden="true"></span> Call Hello
             </NavLink>
-        </li>        
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="callHelloSecure">
+                <span class="oi oi-plus" aria-hidden="true"></span> Call HelloSecure
+            </NavLink>
+        </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </li>
 
-        @if(IsAuthenticated){
-                <li class="nav-item px-3">
-                    <a href="#"  class="nav-link" @onclick="LogoutAsync"><span class="oi oi-account-logout" aria-hidden="true"></span>Logout</a>
-                </li>                
-            }else{
-                <li class="nav-item px-3">
-                  <NavLink class="nav-link" href="@LoginUrl">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
-                    </NavLink>
-                </li>
-            }
+        @if (IsAuthenticated)
+        {
+            <li class="nav-item px-3">
+                <a href="#" class="nav-link" @onclick="LogoutAsync"><span class="oi oi-account-logout" aria-hidden="true"></span>Logout</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="@LoginUrl">
+                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
@@ -63,10 +71,10 @@
     private string LoginUrl { get; set; }
 
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         LoginUrl = $"/login?return={NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}";
-
+        return Task.CompletedTask;
     }
 
     protected override async Task OnParametersSetAsync()

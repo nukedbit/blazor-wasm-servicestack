@@ -1,23 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>MyApp</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>MyApp</PackageId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0" />
-    <PackageReference Include="ServiceStack" Version="5.13.3" />
-    <PackageReference Include="ServiceStack.OrmLite.Sqlite.Cil" Version="5.13.3" />
-    <PackageReference Include="ServiceStack.Server" Version="5.13.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0" />
+        <PackageReference Include="ServiceStack" Version="5.*" />
+        <PackageReference Include="ServiceStack.Extensions" Version="5.*" />
+        <PackageReference Include="ServiceStack.OrmLite.Sqlite.Data" Version="5.*" />
+        <PackageReference Include="ServiceStack.Server" Version="5.*" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MyApp.ServiceInterface\MyApp.ServiceInterface.csproj" />
-    <ProjectReference Include="..\MyApp.ServiceModel\MyApp.ServiceModel.csproj" />
-    <ProjectReference Include="..\MyApp.Client\MyApp.Client.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MyApp.Client\MyApp.Client.csproj" />
+        <ProjectReference Include="..\MyApp.ServiceInterface\MyApp.ServiceInterface.csproj" />
+        <ProjectReference Include="..\MyApp.ServiceModel\MyApp.ServiceModel.csproj" />
+    </ItemGroup>
+
+    <!-- Called in release.yml with GitHub Actions secrets -->
+    <Target Name="DEPLOY_ACTION">
+        <Exec Command="ECHO DEPLOY_ACTION: DEPLOY_API=$(DEPLOY_API),DEPLOY_CDN=$(DEPLOY_CDN)" />
+
+        <!-- Define custom domain name that CDN should use -->
+        <Exec Condition="$(DEPLOY_CDN) != ''" Command="ECHO $(DEPLOY_CDN) > $(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/CNAME" />
+
+        <!-- 404.html SPA fallback (supported by GitHub Pages, Cloudflare & Netlify CDNs) -->
+        <Copy Condition="$(DEPLOY_API) != ''"
+              SourceFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/index.html"
+              DestinationFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/404.html" />
+
+        <!-- define /api proxy routes (supported by Cloudflare or Netlify CDNs)  -->
+        <WriteLinesToFile Condition="$(DEPLOY_API) != ''"
+            File="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects"
+            Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects).Replace('{DEPLOY_API}',$(DEPLOY_API)))"
+            Overwrite="true"
+            Encoding="UTF-8"/>
+    </Target>
 
 </Project>
