@@ -23,7 +23,7 @@ public class AppHost : AppHostBase, IHostingStartup
             "https://localhost:5002",
             "https://localhost:44344",
             "http://localhost:56811",
-            "https://$DEPLOY_CDN"
+            "https://{DEPLOY_CDN}"
         }, allowCredentials: true));
     }
 
