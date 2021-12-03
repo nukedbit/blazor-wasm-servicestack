@@ -1,7 +1,6 @@
 @page "/hello-secure"
 @attribute [Authorize()]
 @inherits StackBaseComponent
-@using System.Collections.Generic
 
 <h1>Call HelloSecure</h1>
 
@@ -16,12 +15,12 @@ else if (apiResult.Response != null) {
 }
 
 @code {
-    private HelloSecure request = new()
+    HelloSecure request = new()
     {
         Name = "Blazor WASM"
     };
 
-    private ApiResult<HelloResponse> apiResult = new();
+    ApiResult<HelloResponse> apiResult = new();
 
-    private async Task CallApi() => apiResult = await ApiAsync(request);
+    async Task CallApi() => apiResult = await ApiAsync(request);
 }

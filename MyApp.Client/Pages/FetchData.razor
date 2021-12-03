@@ -35,11 +35,11 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    List<WeatherForecast> forecasts = new();
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        forecasts = await Http.GetFromJsonAsync<List<WeatherForecast>>("sample-data/weather.json") ?? forecasts;
     }
 
     public class WeatherForecast

@@ -37,31 +37,28 @@
 
 
 @code {
-    private ApiResult<AuthenticateResponse> apiResult = new();
+    ApiResult<AuthenticateResponse> apiResult = new();
 
-    private string Email { get; set; } = "";
-    private string Password { get; set; } = "";
+    string Email { get; set; } = "";
+    string Password { get; set; } = "";
 
-    private void SetUser(string email, string password)
+    void SetUser(string email, string password)
     {
         Email = email;
         Password = password;
     }
 
-    private async Task LoginAsync()
+    async Task LoginAsync()
     {
         apiResult.Reset();
-        var emailEmpty = Email.IsNullOrEmpty();
-        var passwordEmpty = Password.IsNullOrEmpty();
-        if (emailEmpty)
-        {
+
+        if (Email.IsNullOrEmpty())
             apiResult.AddFieldError(nameof(Authenticate.UserName), "Email is required");
-        }
-        if (passwordEmpty)
-        {
+
+        if (Password.IsNullOrEmpty())
             apiResult.AddFieldError(nameof(Authenticate.Password), "Password is required");
-        }
-        if (emailEmpty || passwordEmpty) return;
+
+        if (apiResult.IsError) return;
 
         apiResult = await provider.Login(Email, Password);
 
