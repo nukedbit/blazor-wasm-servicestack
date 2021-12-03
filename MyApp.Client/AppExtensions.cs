@@ -1,13 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Web;
 using Microsoft.AspNetCore.Components;
+using ServiceStack;
 
 namespace MyApp.Client;
 
-//https://jasonwatmore.com/post/2020/08/09/blazor-webassembly-get-query-string-parameters-with-navigation-manager
-public static class NavigationManagerExtensions
+public static class AppExtensions
 {
+    //https://jasonwatmore.com/post/2020/08/09/blazor-webassembly-get-query-string-parameters-with-navigation-manager
     public static NameValueCollection QueryString(this NavigationManager navigationManager)
     {
         string query = new Uri(navigationManager.Uri).Query;
@@ -18,4 +19,8 @@ public static class NavigationManagerExtensions
     {
         return navigationManager.QueryString()[key];
     }
+
+    public static string InvalidClass<T>(this ApiResult<T> apiResult, string fieldName) => apiResult.HasFieldError(fieldName)
+        ? "is-invalid"
+        : "";
 }
