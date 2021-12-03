@@ -40,10 +40,7 @@
     private ApiResult<AuthenticateResponse> apiResult = new();
 
     private string Email { get; set; } = "";
-    private bool EmailValid => !apiResult.HasFieldError(nameof(Authenticate.UserName));
-
     private string Password { get; set; } = "";
-    private bool PasswordValid => !apiResult.HasFieldError(nameof(Authenticate.Password));
 
     private void SetUser(string email, string password)
     {
