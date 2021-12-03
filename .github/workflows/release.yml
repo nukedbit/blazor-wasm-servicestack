@@ -44,8 +44,7 @@ jobs:
       - name: Publish dotnet project
         working-directory: ./MyApp
         run: | 
-          dotnet msbuild -target:DEPLOY_ACTION /p:DEPLOY_API=${{ env.deploy_api }} /p:DEPLOY_CDN=${{ env.deploy_cdn }}
-          dotnet publish -c Release
+          dotnet publish -c Release /p:DEPLOY_API=${{ env.deploy_api }} /p:DEPLOY_CDN=${{ env.deploy_cdn }}
 
       # Assign environment variables used in subsequent steps
       - name: repository name fix
