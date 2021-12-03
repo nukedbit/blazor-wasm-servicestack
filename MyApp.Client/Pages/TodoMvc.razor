@@ -1,0 +1,157 @@
+@page "/todomvc"
+@inherits StackBaseComponent
+
+<div class="max-w-xl">
+
+    <div class="flex my-8 justify-center">
+        <span class="ml-1 sm:ml-4 sm:text-3xl text-gray-700">Todos Application</span>
+    </div>
+
+    @if (errorStatus?.Message != null)
+    {
+        <div class="mb-3 alert alert-danger" role="alert">@errorStatus?.Message</div>
+    }
+
+    <input type="text" @bind-value="request.Text" placeholder="What needs to be done?"
+           class="w-full shadow mb-4"
+           @onkeyup="addTodo">
+
+    <div class="bg-white shadow overflow-hidden rounded-md">
+        <ul role="list" class="divide-y divide-gray-200">
+            @foreach (var todo in filteredTodos())
+            {
+                <li @key="todo.Id" class="px-6 py-4">
+                    <div class="relative flex items-start" @onclick="_ => toggleTodo(todo.Id)">
+                        <div class="flex items-center h-6">
+                            @if (todo.IsFinished)
+                            {
+                                <MdiCheckCircle class="text-green-600 h-5 w-5" />
+                            }
+                            else
+                            {
+                                <MdiCheckboxBlankCircleOutline class="h-5 w-5" />
+                            }
+                        </div>
+                        <div class="ml-3 flex-grow">
+                            <label class=@(todo.IsFinished ? "line-through" : "")>@todo.Text</label>
+                        </div>
+                        <div>
+                            @if (todo.IsFinished)
+                            {
+                                <MdiTrashCanOutline class="h-5 w-5" @onclick="_ => removeTodo(todo.Id)" />
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="mt-4 flex justify-between">
+        <div class="text-gray-400 leading-8 mr-4">
+            @unfinishedTodos().Count() <span class="hidden sm:inline">item(s)</span> left
+        </div>
+
+        <div class="inline-flex shadow-sm rounded-md">
+            <FilterTab class="rounded-l-lg border" IsActive=@(filter == Filter.All) @onclick=@(() => filter = Filter.All)>
+                All
+            </FilterTab>
+            <FilterTab class="border-t border-b" IsActive=@(filter == Filter.Unfinished) @onclick=@(() => filter = Filter.Unfinished)>
+                Active
+            </FilterTab>
+            <FilterTab class="rounded-r-md border" IsActive=@(filter == Filter.Finished) @onclick=@(() => filter = Filter.Finished)>
+                Completed
+            </FilterTab>
+        </div>
+
+        <div class="leading-8 ml-4">
+            <a href="#" class=@(finishedTodos().Count() == 0 ? "invisible" : "") @onclick="_ => removeFinishedTodos()" @onclick:preventDefault>
+                clear <span class="hidden sm:inline">completed</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center text-gray-400 flex justify-center -ml-6">
+        <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.Client/Pages/Todos.razor" class="mx-2">
+            <SimpleIconsBlazor class="w-5 h-5 inline-flex text-purple-800" />
+            Todos.razor
+        </a>
+    </div>
+
+</div>
+
+
+@code {
+    enum Filter
+    {
+        All,
+        Finished,
+        Unfinished
+    }
+
+    List<Todo> todos = new();
+    Filter filter = Filter.All;
+
+    CreateTodo request = new();
+    ResponseStatus? errorStatus;
+
+    IEnumerable<Todo> filteredTodos() => filter switch
+    {
+        Filter.Finished => finishedTodos(),
+        Filter.Unfinished => unfinishedTodos(),
+        _ => todos
+    };
+    IEnumerable<Todo> finishedTodos() => todos.Where(x => x.IsFinished);
+    IEnumerable<Todo> unfinishedTodos() => todos.Where(x => !x.IsFinished);
+
+    protected override async Task OnInitializedAsync() => await refreshTodos();
+
+    async Task refreshTodos()
+    {
+        var apiResult = await ApiAsync(new QueryTodos());
+        if (apiResult.IsSuccess)
+            todos = apiResult.Response!.Results;
+        else
+            errorStatus = apiResult.ErrorStatus;
+    }
+
+    async Task addTodo(KeyboardEventArgs e)
+    {
+        if (e.Key != "Enter") return;
+        var apiResult = await ApiAsync(request);
+        if (apiResult.IsSuccess)
+        {
+            todos.Add(apiResult.Response!);
+            request.Text = "";
+        }
+        else
+            errorStatus = apiResult.ErrorStatus;
+    }
+
+    async Task removeTodo(long id)
+    {
+        var apiResult = await ApiAsync(new DeleteTodo { Id = id });
+        errorStatus = apiResult.ErrorStatus;
+        todos.RemoveAll(x => x.Id == id);
+        await refreshTodos();
+    }
+
+    async Task removeFinishedTodos()
+    {
+        var ids = todos.Where(x => x.IsFinished).Select(x => x.Id).ToList();
+        if (ids.Count == 0) return;
+        var apiResult = await ApiAsync(new DeleteTodos { Ids = ids });
+        errorStatus = apiResult.ErrorStatus;
+        todos.RemoveAll(x => ids.Contains(x.Id));
+        await refreshTodos();
+    }
+
+    async Task toggleTodo(long id)
+    {
+        var todo = todos.Find(x => x.Id == id)!;
+        todo.IsFinished = !todo.IsFinished;
+        var apiResult = await ApiAsync(new UpdateTodo { Id = todo.Id, Text = todo.Text, IsFinished = todo.IsFinished });
+        errorStatus = apiResult.ErrorStatus;
+        await refreshTodos();
+    }
+}

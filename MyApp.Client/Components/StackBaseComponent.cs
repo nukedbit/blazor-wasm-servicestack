@@ -29,6 +29,12 @@ public abstract class StackBaseComponent : ComponentBase
     protected async Task<ApiResult<TResponse>> ApiAsync<TResponse>(IReturn<TResponse> request) =>
         await (await GetClientAsync()).ApiAsync(request);
 
+    protected async Task<ApiResult<EmptyResponse>> ApiAsync(IReturnVoid request) =>
+        await (await GetClientAsync()).ApiAsync(request);
+
+    protected async Task<TResponse> SendAsync<TResponse>(IReturn<TResponse> request) =>
+        await (await GetClientAsync()).SendAsync(request);
+
     public static string ClassNames(params string[] classes)
     {
         var sb = new StringBuilder();

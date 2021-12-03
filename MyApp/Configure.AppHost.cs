@@ -25,6 +25,8 @@ public class AppHost : AppHostBase, IHostingStartup
             "http://localhost:56811",
             "https://{DEPLOY_CDN}"
         }, allowCredentials: true));
+
+        Plugins.Add(new AutoQueryDataFeature()); // For TodosService
     }
 
     public void Configure(IWebHostBuilder builder) => builder
