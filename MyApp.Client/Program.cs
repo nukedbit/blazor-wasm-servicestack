@@ -21,13 +21,14 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage(config =>
     config.JsonSerializerOptions.WriteIndented = true);
 
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? builder.HostEnvironment.BaseAddress;
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
+// Use / for local or CDN resources
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ServiceStackStateProvider>());
 
+// Use {ApiBaseUrl} for API requests
 builder.Services.AddScoped(_ =>
 {
-    var client = BlazorClient.Create(apiBaseUrl);
+    var client = BlazorClient.Create(builder.Configuration["ApiBaseUrl"] ?? builder.HostEnvironment.BaseAddress);
     client.UseBasePath = "/api";
     return client;
 });

@@ -1,90 +1,79 @@
 @page "/login"
+@inherits StackBaseComponent
 @inject ServiceStackStateProvider provider
 @inject ILogger<Login> logger;
 @inject NavigationManager NavigationManager;
 
-<form submit=false class="@FormClass">
-    <div class="form-group">
-        <label for="login">Email address</label>
-        <input type="email" class="form-control" id="login" placeholder="Enter email" @bind-value="@Email" required>
-        @if (!EmailError.IsNullOrEmpty())
-        {
-            <div class="invalid-feedback">
-                @EmailError
-            </div>
-        }
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Password" @bind-value="@Password" required />
-        @if (!PasswordError.IsNullOrEmpty())
-        {
-            <div class="invalid-feedback">
-                @PasswordError
-            </div>
-        }
-    </div>
-    @if (!AuthenticationError.IsNullOrEmpty())
-    {
-        <div style="color:red">
-            @AuthenticationError
-        </div>
-    }
+<div class="container">
+    <div class="row">
+        <form submit=false class=@ClassNames("col-sm-6", apiResult.IsError ? " was-validated" : "")>
+            @if (apiResult.ErrorSummary != null)
+            {
+                <div class="mb-3 alert alert-danger" role="alert">@apiResult.ErrorSummary</div>
+            }
 
-    <button type="submit" class="btn btn-primary" @onclick:preventDefault @onclick="LoginAsync">Login</button>
-</form>
+            <div class="mb-3">
+                <label for="userName">Email address</label>
+                <input type="email" id="userName" placeholder="Enter email" @bind-value="@Email" required
+                       class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.UserName)))>
+                <div class="invalid-feedback">@(apiResult.FieldErrorMessage(nameof(Authenticate.UserName)))</div>
+            </div>
+            <div class="mb-3">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Password" @bind-value="@Password" required
+                       class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.Password)))>
+                <div class="invalid-feedback">@(apiResult.FieldErrorMessage(nameof(Authenticate.Password)))</div>
+            </div>
+
+            <button type="submit" class="mb-3 btn btn-primary" @onclick:preventDefault @onclick="LoginAsync">Login</button>
+        </form>
+
+        <div class="mt-4">
+            Quick Link:
+            <button class="btn btn-secondary" @onclick='e => SetUser("admin@localhost.local", "p@55wOrd")'>admin@localhost.local</button>
+        </div>
+    </div>
+</div>
 
 
 @code {
-    private string Email { get; set; } = "admin@localhost.local";
+    private ApiResult<AuthenticateResponse> apiResult = new();
 
-    private string Password { get; set; } = "p@55wOrd";
+    private string Email { get; set; } = "";
+    private bool EmailValid => !apiResult.HasFieldError(nameof(Authenticate.UserName));
 
-    private string EmailError { get; set; }
+    private string Password { get; set; } = "";
+    private bool PasswordValid => !apiResult.HasFieldError(nameof(Authenticate.Password));
 
-    private string PasswordError { get; set; }
-
-    private string AuthenticationError { get; set; }
-
-    private string FormClass { get; set; }
+    private void SetUser(string email, string password)
+    {
+        Email = email;
+        Password = password;
+    }
 
     private async Task LoginAsync()
     {
-        try
+        apiResult.Reset();
+        var emailEmpty = Email.IsNullOrEmpty();
+        var passwordEmpty = Password.IsNullOrEmpty();
+        if (emailEmpty)
         {
-            var emailEmpty = Email.IsNullOrEmpty();
-            var passwordEmpty = Password.IsNullOrEmpty();
-            if (emailEmpty)
-            {
-                EmailError = "Email is required";
-            }
-            if (passwordEmpty)
-            {
-                PasswordError = "Password is required";
-            }
-            FormClass = "was-validated";
-            if (emailEmpty || passwordEmpty) return;
-            await provider.Login(Email, Password);
-            Console.WriteLine("returnUrl", NavigationManager.QueryString("return"));
-            if (NavigationManager.QueryString("return") is string returnUrl)
-            {
-                returnUrl = returnUrl.IsNullOrEmpty() ? "/" : returnUrl;
-                NavigationManager.NavigateTo(returnUrl, true);
-            }
+            apiResult.AddFieldError(nameof(Authenticate.UserName), "Email is required");
         }
-        catch (HttpRequestException ex)
+        if (passwordEmpty)
         {
-            logger.LogError(ex.ToString());
-            if (ex.StatusCode is HttpStatusCode code && code == HttpStatusCode.Unauthorized)
-            {
-                AuthenticationError = "Not Authorized wrong credentials.";
-            }
+            apiResult.AddFieldError(nameof(Authenticate.Password), "Password is required");
         }
-        catch (Exception ex)
+        if (emailEmpty || passwordEmpty) return;
+
+        apiResult = await provider.Login(Email, Password);
+
+        if (apiResult.IsSuccess)
         {
-            AuthenticationError = "Service error";
-            Console.WriteLine("Exception Type :", ex.GetType().Name);
-            logger.LogDebug(ex, "login");
+            var returnUrl = NavigationManager.QueryString("return");
+            if (returnUrl.IsNullOrEmpty())
+                returnUrl = "/";
+            NavigationManager.NavigateTo(returnUrl!, true);
         }
     }
 } 

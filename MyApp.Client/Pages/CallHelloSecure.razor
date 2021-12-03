@@ -1,24 +1,27 @@
-@page "/callhellosecure"
+@page "/hello-secure"
 @attribute [Authorize()]
 @inherits StackBaseComponent
 @using System.Collections.Generic
 
 <h1>Call HelloSecure</h1>
 
-<p>Protected API Response: @Response</p>
+<input type="text" placeholder="What's your name?" @bind-value="request.Name" />
+<button class="btn-primary" @onclick="CallApi">Go!</button>
 
-<button class="btn btn-primary" @onclick="CallHelloSecureService">Call HelloSecure</button>
+@if (apiResult.ErrorMessage != null) {
+    <h3 class="text-danger mt-2">@apiResult.ErrorMessage</h3>
+}
+else if (apiResult.Response != null) {
+    <h3 class="text-success mt-2">@apiResult.Response.Result</h3>
+}
 
 @code {
-    private string Response { get; set; }
-
-    private async Task CallHelloSecureService()
+    private HelloSecure request = new()
     {
+        Name = "Blazor WASM"
+    };
 
-        var client = await GetClientAsync();
-        var response = await client.GetAsync(new HelloSecure {
-            Name = "World"
-        });
-        Response = response.Result;
-    }
+    private ApiResult<HelloResponse> apiResult = new();
+
+    private async Task CallApi() => apiResult = await ApiAsync(request);
 }

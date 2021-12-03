@@ -1,23 +1,25 @@
-@page "/callhello"
+@page "/hello"
 @inherits StackBaseComponent
-@using System.Collections.Generic
 
 <h1>Call Hello</h1>
 
-<p>API Response: @Response</p>
+<input type="text" placeholder="What's your name?" @bind-value="request.Name" />
+<button class="btn-primary" @onclick="CallApi">Go!</button>
 
-<button class="btn btn-primary" @onclick="CallHelloService">Call Hello</button>
+@if (apiResult.ErrorMessage != null) {
+    <h3 class="text-danger mt-2">@apiResult.ErrorMessage</h3>
+}
+else if (apiResult.Response != null) {
+    <h3 class="text-success mt-2">@apiResult.Response.Result</h3>
+}
 
 @code {
-    private string Response { get; set; }
-
-    private async Task CallHelloService()
+    private Hello request = new()
     {
+        Name = "Blazor WASM"
+    };
 
-        var client = await GetClientAsync();
-        var response = await client.GetAsync(new Hello {
-            Name = "World"
-        });
-        Response = response.Result;
-    }
+    private ApiResult<HelloResponse> apiResult = new();
+
+    private async Task CallApi() => apiResult = await ApiAsync(request);
 }

@@ -14,7 +14,7 @@ public static class NavigationManagerExtensions
         return HttpUtility.ParseQueryString(query);
     }
 
-    public static string QueryString(this NavigationManager navigationManager, string key)
+    public static string? QueryString(this NavigationManager navigationManager, string key)
     {
         return navigationManager.QueryString()[key];
     }

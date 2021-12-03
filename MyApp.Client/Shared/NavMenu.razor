@@ -16,18 +16,18 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="callhello">
+            <NavLink class="nav-link" href="hello" Match="NavLinkMatch.All">
                 <span class="oi oi-plus" aria-hidden="true"></span> Call Hello
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="callHelloSecure">
+            <NavLink class="nav-link" href="hello-secure">
                 <span class="oi oi-plus" aria-hidden="true"></span> Call HelloSecure
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
             </NavLink>
         </li>
         <li class="nav-item px-3">
@@ -56,19 +56,16 @@
 @code {
     private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : "";
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
 
     protected bool IsAuthenticated { get; set; }
 
-    private string LoginUrl { get; set; }
+    private string? LoginUrl { get; set; }
 
 
     protected override Task OnInitializedAsync()
@@ -79,8 +76,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var state = await authenticationStateTask;
-        IsAuthenticated = state.User.Identity.IsAuthenticated;
+        var state = await authenticationStateTask!;
+        IsAuthenticated = state.User?.Identity?.IsAuthenticated ?? false;
     }
 
     private async Task LogoutAsync()
