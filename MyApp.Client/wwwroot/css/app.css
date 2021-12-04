@@ -1,4 +1,5 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -28,6 +29,9 @@ a, .btn-link {
 
 .validation-message {
     color: red;
+}
+.max-w-xl {
+    max-width: 36rem;
 }
 
 #blazor-error-ui {
