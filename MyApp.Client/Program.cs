@@ -25,6 +25,7 @@ builder.Services.AddBlazoredLocalStorage(config =>
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ServiceStackStateProvider>());
 
+BlazorClient.MessageHandler = new EnableCorsMessageHandler();
 // Use {ApiBaseUrl}/api for ServiceStack API requests
 builder.Services.AddScoped(_ => BlazorClient.Create(builder.Configuration["ApiBaseUrl"] ?? builder.HostEnvironment.BaseAddress)
         .WithBasePath("/api"));
