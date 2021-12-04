@@ -2,11 +2,9 @@ using Funq;
 using ServiceStack;
 using MyApp.ServiceInterface;
 
-[assembly: HostingStartup(typeof(MyApp.AppHost))]
-
 namespace MyApp;
 
-public class AppHost : AppHostBase, IHostingStartup
+public class AppHost : AppHostBase
 {
     public AppHost() : base("MyApp", typeof(MyServices).Assembly) { }
 
@@ -26,8 +24,4 @@ public class AppHost : AppHostBase, IHostingStartup
             "https://{DEPLOY_CDN}"
         }, allowCredentials: true));
     }
-
-    public void Configure(IWebHostBuilder builder) => builder
-        .ConfigureServices((context, services) =>
-            services.ConfigureNonBreakingSameSiteCookies(context.HostingEnvironment));
 }

@@ -1,0 +1,133 @@
+@inherits StackComponentBase
+
+<form @onsubmit="_ => OnSubmit()" class="mt-5 max-w-xl shadow rounded p-4">
+
+    <h1 class="fs-4 text-secondary text-center">
+        Edit Booking
+    </h1>
+
+    <ErrorSummary Status=@apiResult.ErrorStatus VisibleFields=@(new[]{ 
+        nameof(CreateBooking.Name), nameof(CreateBooking.RoomType), nameof(CreateBooking.RoomNumber), 
+        nameof(CreateBooking.BookingStartDate), nameof(CreateBooking.BookingEndDate),  
+        nameof(CreateBooking.Cost), nameof(CreateBooking.Notes),
+    }) />
+
+    <div class="mb-3 form-floating">
+        <input type="text" id="Name" placeholder="Name" @bind-value="request.Name" required
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.Name)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.Name)></ErrorField>
+        <label for="Name">The name for this booking</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <select id="RoomType" @bind="request.RoomType"
+            class=@ClassNames("form-select", apiResult.InvalidClass(nameof(CreateBooking.RoomType)))>
+            @foreach (var item in Enum.GetValues(typeof(RoomType)))
+            { 
+                <option value="@item">@item.ToString()</option> 
+            } 
+        </select> 
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.RoomType)></ErrorField>
+        <label for="RoomType">Room Type</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="text" id="RoomNumber" min="0" placeholder="Room Number" @bind-value="request.RoomNumber" required
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.RoomNumber)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.RoomNumber)></ErrorField>
+        <label for="RoomNumber">Room Number</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="date" id="BookingStartDate" min="0" placeholder="Booking Start Date" @bind-value="request.BookingStartDate" required
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.BookingStartDate)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.BookingStartDate)></ErrorField>
+        <label for="name">Booking Start Date</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="date" id="BookingEndDate" min="0" placeholder="Booking End Date" @bind-value="request.BookingEndDate"
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.BookingEndDate)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.BookingEndDate)></ErrorField>
+        <label for="name">Booking End Date</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="text" id="Cost" min="0" step="any" placeholder="Cost" @bind-value="request.Cost" required
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.Cost)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.Cost)></ErrorField>
+        <label for="Cost">Cost</label>
+    </div>
+    
+    <div class="mb-3 form-floating">
+        <textarea type="text" id="Notes" placeholder="Notes" @bind="request.Notes" rows="3"
+               class=@ClassNames("form-control", apiResult.InvalidClass(nameof(CreateBooking.Notes)))></textarea>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(CreateBooking.Notes)></ErrorField>
+        <label for="Name">Notes about this booking</label>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <button class="btn btn-outline-primary" @onclick=@(async () => { await close.InvokeAsync(); })>Close</button>
+
+        <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.Client/Pages/BookingsCrud/Update.razor" class="mt-2">
+            <img src="/img/blazor.svg" class="w-5 h-5 inline-flex text-purple-800 me-1">Update.razor</a>
+
+        <button type="submit" class="btn btn-primary">Update Booking</button>
+    </div>
+</form>
+
+
+@if (apiResult.IsSuccess) {
+    <h3 class="text-success mt-4">@apiResult.Response!.Id</h3>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public EventCallback close { get; set; }
+    [Parameter] public EventCallback<IdResponse> done { get; set; }
+
+    UpdateBooking request = new();
+
+    async Task refresh()
+    {
+        var selectApiResult = await ApiAsync(new QueryBookings { Id = Id });
+        if (selectApiResult.IsError)
+        {
+            apiResult = ApiResult.CreateError<IdResponse>(selectApiResult.ErrorStatus!);
+            return;
+        }
+
+        if (selectApiResult.Response!.Results.Count == 0)
+        {
+            apiResult = ApiResult.CreateError<IdResponse>($"Booking #{Id} does not exist");
+            return;
+        }
+
+        var booking = selectApiResult.Response!.Results[0];
+        request = new UpdateBooking
+        {
+            Id = booking.Id,
+            Name = booking.Name,
+            RoomType = booking.RoomType,
+            RoomNumber = booking.RoomNumber,
+            BookingStartDate = booking.BookingStartDate,
+            BookingEndDate = booking.BookingEndDate,
+            Cost = booking.Cost,
+            Notes = booking.Notes,
+        };
+    }
+
+    protected override async Task OnInitializedAsync() => await refresh();
+
+    ApiResult<IdResponse> apiResult = new();
+
+    async Task OnSubmit()
+    {
+        apiResult = await ApiAsync(request);
+
+        if (apiResult.IsSuccess)
+        {
+            await done.InvokeAsync(apiResult.Response!);
+        }
+    }
+}

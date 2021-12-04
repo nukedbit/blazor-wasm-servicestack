@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using MyApp.ServiceModel;
 using ServiceStack;
 using ServiceStack.Data;
-using ServiceStack.DataAnnotations;
 using ServiceStack.OrmLite;
 
 [assembly: HostingStartup(typeof(MyApp.ConfigureDb))]
@@ -10,28 +8,26 @@ using ServiceStack.OrmLite;
 namespace MyApp
 {
     // Example Data Model
-    public class MyTable
-    {
-        [AutoIncrement]
-        public int Id { get; set; }
-        public string? Name { get; set; }
-    }
+    //public class MyTable
+    //{
+    //    [AutoIncrement]
+    //    public int Id { get; set; }
+    //    public string? Name { get; set; }
+    //}
 
     public class ConfigureDb : IHostingStartup
     {
         public void Configure(IWebHostBuilder builder) => builder
-            .ConfigureServices(services => services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(
-                builder.GetSetting("ConnectionStrings:DefaultConnection") ?? ":memory:",
+            .ConfigureServices((context,services) => services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(
+                context.Configuration.GetConnectionString("DefaultConnection") ?? ":memory:",
                 SqliteDialect.Provider)))
             .ConfigureAppHost(appHost =>
             {
-                appHost.GetPlugin<SharpPagesFeature>()?.ScriptMethods.Add(new DbScriptsAsync());
-
                 // Create non-existing Table and add Seed Data Example
-                using var db = appHost.Resolve<IDbConnectionFactory>().Open();
-                if (db.CreateTableIfNotExists<MyTable>())
+                using var db = appHost.Resolve<IDbConnectionFactory>().Open();                
+                if (db.CreateTableIfNotExists<Bookings>())
                 {
-                    db.Insert(new MyTable { Name = "Seed Data for new MyTable" });
+                    // db.Insert(new MyTable { Name = "Seed Data for new MyTable" });
                 }
             });
     }
