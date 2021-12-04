@@ -1,22 +1,19 @@
 @page "/todomvc"
 @inherits StackBaseComponent
 
-<div class="max-w-xl">
+<form @onsubmit="_ => addTodo()" class="max-w-xl">
 
     <div class="flex my-8 justify-center">
-        <span class="ml-1 sm:ml-4 sm:text-3xl text-gray-700">Todos Application</span>
+        <span class="ml-1 sm:ml-4 text-xl sm:text-3xl text-gray-700">Todos Application</span>
     </div>
 
-    @if (errorStatus?.Message != null)
-    {
-        <div class="mb-3 alert alert-danger" role="alert">@errorStatus?.Message</div>
-    }
+    <ErrorSummary Status=@errorStatus VisibleFields=@(new[] { nameof(CreateTodo.Text) })></ErrorSummary>
 
     <input type="text" @bind-value="request.Text" placeholder="What needs to be done?"
-           class="w-full shadow mb-4"
-           @onkeyup="addTodo">
+           class=@ClassNames("w-full shadow-sm form-control", errorStatus.InvalidClass(nameof(CreateTodo.Text)))>
+    <ErrorField class="m-2" Status=@errorStatus Name=@nameof(CreateTodo.Text)></ErrorField>
 
-    <div class="bg-white shadow overflow-hidden rounded-md">
+    <div class="mt-4 bg-white shadow-sm overflow-hidden rounded-md">
         <ul role="list" class="divide-y divide-gray-200">
             @foreach (var todo in filteredTodos())
             {
@@ -25,11 +22,11 @@
                         <div class="flex items-center h-6">
                             @if (todo.IsFinished)
                             {
-                                <MdiCheckCircle class="text-green-600 h-5 w-5" />
+                                <span class="material-icons text-green-600 h-5 w-5">check_circle</span>
                             }
                             else
                             {
-                                <MdiCheckboxBlankCircleOutline class="h-5 w-5" />
+                                <span class="material-icons h-5 w-5">radio_button_unchecked</span>
                             }
                         </div>
                         <div class="ml-3 flex-grow">
@@ -38,7 +35,7 @@
                         <div>
                             @if (todo.IsFinished)
                             {
-                                <MdiTrashCanOutline class="h-5 w-5" @onclick="_ => removeTodo(todo.Id)" />
+                                <span class="material-icons h-5 w-5" @onclick="_ => removeTodo(todo.Id)">delete_outline</span>
                             }
                         </div>
                     </div>
@@ -53,15 +50,15 @@
         </div>
 
         <div class="inline-flex shadow-sm rounded-md">
-            <FilterTab class="rounded-l-lg border" IsActive=@(filter == Filter.All) @onclick=@(() => filter = Filter.All)>
+            <a href="#" @onclick:preventDefault class=@TabClass("rounded-l-lg border", filter == Filter.All) @onclick=@(() => filter = Filter.All)>
                 All
-            </FilterTab>
-            <FilterTab class="border-t border-b" IsActive=@(filter == Filter.Unfinished) @onclick=@(() => filter = Filter.Unfinished)>
+            </a>
+            <a href="#" @onclick:preventDefault class=@TabClass("border-t border-b", filter == Filter.Unfinished) @onclick=@(() => filter = Filter.Unfinished)>
                 Active
-            </FilterTab>
-            <FilterTab class="rounded-r-md border" IsActive=@(filter == Filter.Finished) @onclick=@(() => filter = Filter.Finished)>
+            </a>
+            <a href="#" @onclick:preventDefault class=@TabClass("rounded-r-md border", filter == Filter.Finished) @onclick=@(() => filter = Filter.Finished)>
                 Completed
-            </FilterTab>
+            </a>
         </div>
 
         <div class="leading-8 ml-4">
@@ -73,12 +70,12 @@
 
     <div class="mt-4 text-center text-gray-400 flex justify-center -ml-6">
         <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.Client/Pages/TodoMvc.razor" class="mx-2">
-            <SimpleIconsBlazor class="w-5 h-5 inline-flex text-purple-800" />
+            <img src="/img/blazor.svg" class="w-5 h-5 inline-flex text-purple-800">
             TodoMvc.razor
         </a>
     </div>
 
-</div>
+</form>
 
 
 @code {
@@ -88,6 +85,11 @@
         Finished,
         Unfinished
     }
+    static string[] VisibleFields = new[] { nameof(CreateTodo.Text) };
+
+    string TabClass(string @class, bool isActive) =>
+        ClassNames("border-gray-200 text-sm font-medium px-4 py-2 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700",
+            (isActive ? "text-blue-700 dark:bg-blue-600" : "text-gray-900 hover:text-blue-700 dark:bg-gray-700"), @class);
 
     List<Todo> todos = new();
     Filter filter = Filter.All;
@@ -106,6 +108,7 @@
 
     protected override async Task OnInitializedAsync() => await refreshTodos();
 
+    // For best UX: initially changes applied locally, before revalidated with real server state
     async Task refreshTodos()
     {
         var apiResult = await ApiAsync(new QueryTodos());
@@ -115,24 +118,23 @@
             errorStatus = apiResult.ErrorStatus;
     }
 
-    async Task addTodo(KeyboardEventArgs e)
+    async Task addTodo()
     {
-        if (e.Key != "Enter") return;
+        errorStatus = null;
+        todos.Add(new Todo { Text = request.Text });
         var apiResult = await ApiAsync(request);
         if (apiResult.IsSuccess)
-        {
-            todos.Add(apiResult.Response!);
             request.Text = "";
-        }
         else
             errorStatus = apiResult.ErrorStatus;
+        await refreshTodos();
     }
 
     async Task removeTodo(long id)
     {
+        todos.RemoveAll(x => x.Id == id);
         var apiResult = await ApiAsync(new DeleteTodo { Id = id });
         errorStatus = apiResult.ErrorStatus;
-        todos.RemoveAll(x => x.Id == id);
         await refreshTodos();
     }
 
@@ -140,9 +142,9 @@
     {
         var ids = todos.Where(x => x.IsFinished).Select(x => x.Id).ToList();
         if (ids.Count == 0) return;
+        todos.RemoveAll(x => ids.Contains(x.Id));
         var apiResult = await ApiAsync(new DeleteTodos { Ids = ids });
         errorStatus = apiResult.ErrorStatus;
-        todos.RemoveAll(x => ids.Contains(x.Id));
         await refreshTodos();
     }
 
