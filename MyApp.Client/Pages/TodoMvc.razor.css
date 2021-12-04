@@ -3,9 +3,6 @@
 .material-icons.h-5.w-5 {
     font-size: 20px;
 }
-.material-icons.h-6.w-6 {
-    font-size: 22px;
-}
 
 /* tailwind styles used in https://vue-ssg-gh.web-templates.io/todos */
 [type='text']

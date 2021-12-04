@@ -1,5 +1,5 @@
 @page "/counter"
-@inherits StackBaseComponent
+@inherits StackComponentBase
 
 <h1>Counter</h1>
 
@@ -10,10 +10,5 @@
 @code {
     int currentCount = 0;
 
-    async Task IncrementCount()
-    {
-        currentCount++;
-
-        var client = await GetClientAsync();
-    }
+    void IncrementCount() => currentCount++;
 }

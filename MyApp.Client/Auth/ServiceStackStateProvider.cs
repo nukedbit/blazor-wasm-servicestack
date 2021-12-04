@@ -1,44 +1,78 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
 using ServiceStack;
 
 namespace MyApp.Client;
 
+/// <summary>
+/// Typed Wrapper around populated claims
+/// </summary>
+public static class ClaimUtils
+{
+    public const string AuthenticationType = "Server Authentication";
+    public const string PermissionType = "perm";
+
+    public static bool IsAuthenticated(this AuthenticationState? state) => state?.User?.AuthenticatedUser() != null;
+    public static ClaimsPrincipal? AuthenticatedUser(this AuthenticationState? state) => state?.User?.AuthenticatedUser();
+    public static ClaimsPrincipal? AuthenticatedUser(this ClaimsPrincipal principal) =>
+        principal.Identity?.IsAuthenticated == true ? principal : null;
+
+    public static string? GetUserId(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    public static string? GetDisplayName(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.Name)?.Value;
+    public static string? GetEmail(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.Email)?.Value;
+    public static string[] GetRoles(this ClaimsPrincipal principal) => principal.Claims.Where(x => x.Type == ClaimTypes.Role)
+        .Select(x => x.Value).ToArray();
+    public static string[] GetPermissions(this ClaimsPrincipal principal) => principal.Claims.Where(x => x.Type == PermissionType)
+        .Select(x => x.Value).ToArray();
+}
+
 public class ServiceStackStateProvider : AuthenticationStateProvider
 {
+    public const string CacheKey = nameof(AuthenticateResponse);
+
     private ApiResult<AuthenticateResponse> authResult = new();
     private readonly JsonHttpClient client;
 
     ILocalStorageService LocalStorage { get; set; }
 
-    public ServiceStackStateProvider(JsonHttpClient client, ILocalStorageService localStorage)
+    ILogger<ServiceStackStateProvider> Log { get; }
+
+    public ServiceStackStateProvider(JsonHttpClient client, ILocalStorageService localStorage, ILogger<ServiceStackStateProvider> log)
     {
         this.client = client;
         this.LocalStorage = localStorage;
+        this.Log = log;
     }
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var identity = new ClaimsIdentity();
 
         try
         {
             var authResponse = authResult.Completed
                 ? authResult.Response
-                : await LocalStorage.GetItemAsync<AuthenticateResponse>("Authentication");
+                : await LocalStorage.GetItemAsync<AuthenticateResponse>(CacheKey);
+           
+            if (authResponse == null)
+            {
+                Log.LogInformation("Checking server /auth for authentication");
+                var apiResult = await client.ApiAsync(new Authenticate());
+                authResponse = apiResult.Response;
+            }
             
             if (authResponse is null)
-                return new AuthenticationState(new ClaimsPrincipal(identity));
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
             List<Claim> claims = new()
             {
-                new Claim("token", authResponse.BearerToken, ClaimValueTypes.String, null),
-                new Claim(ClaimTypes.NameIdentifier, authResponse.SessionId),
-                new Claim(ClaimTypes.Name, authResponse.UserName),
+                new Claim(ClaimTypes.NameIdentifier, authResponse.UserId),
+                new Claim(ClaimTypes.Name, authResponse.DisplayName),
                 new Claim(ClaimTypes.Email, authResponse.UserName)
             };
             foreach (var role in authResponse.Roles)
@@ -47,43 +81,54 @@ public class ServiceStackStateProvider : AuthenticationStateProvider
             }
             foreach (var permission in authResponse.Permissions)
             {
-                claims.Add(new Claim("perm", permission, ClaimValueTypes.String, null));
+                claims.Add(new Claim(ClaimUtils.PermissionType, permission));
             }
 
-            identity = new ClaimsIdentity(claims, "Server authentication");
+            var identity = new ClaimsIdentity(claims, ClaimUtils.AuthenticationType);
+            return new AuthenticationState(new ClaimsPrincipal(identity));
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Request failed:" + ex.ToString());
-            await LocalStorage.RemoveItemAsync("Authentication");
+            Log.LogError(ex, "SignIn failed");
+            await LocalStorage.RemoveItemAsync(CacheKey);
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
-        return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
     public async Task<ApiResult<AuthenticateResponse>> Logout()
     {
-        await LocalStorage.RemoveItemAsync("Authentication");
+        await LocalStorage.RemoveItemAsync(CacheKey);
         authResult = await client.ApiAsync(new Authenticate { provider = "logout" });
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         return authResult;
     }
 
-    public async Task<ApiResult<AuthenticateResponse>> Login(string email, string password)
+    public async Task<ApiResult<AuthenticateResponse>> SignInAsync(ApiResult<AuthenticateResponse> apiResult)
     {
-        authResult = await client.ApiAsync(new Authenticate
+        authResult = apiResult;
+        if (authResult.IsSuccess)
+        {
+            await LocalStorage.SetItemAsync(CacheKey, authResult.Response!);
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+        return authResult;
+    }
+
+    public Task<ApiResult<AuthenticateResponse>> SignInAsync(AuthenticateResponse authResponse) =>
+        SignInAsync(ApiResult.Create(authResponse));
+
+    // Can SignInAsync with RegisterResponse when Register.AutoLogin = true
+    public Task<ApiResult<AuthenticateResponse>> SignInAsync(RegisterResponse registerResponse) =>
+        SignInAsync(ApiResult.Create(registerResponse.ToAuthenticateResponse()));
+
+    public async Task<ApiResult<AuthenticateResponse>> LoginAsync(string email, string password)
+    {
+        return await SignInAsync(await client.ApiAsync(new Authenticate
         {
             provider = "credentials",
             Password = password,
             UserName = email,
             UseTokenCookie = true
-        });
-
-        if (authResult.IsSuccess)
-        {
-            await LocalStorage.SetItemAsync("Authentication", authResult.Response!);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        }
-
-        return authResult;
+        }));
     }
 }

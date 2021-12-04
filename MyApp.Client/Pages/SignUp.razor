@@ -1,0 +1,105 @@
+@page "/signup"
+@inherits AuthComponentBase
+@inject ServiceStackStateProvider authProvider
+@inject NavigationManager NavigationManager
+
+@if (IsAuthenticated)
+{
+    NavigationManager.NavigateTo(NavigationManager.GetReturnUrl(), true);
+    return;
+}
+
+<h1 class="fs-2 mb-3">Sign Up</h1>
+
+<form @onsubmit="_ => OnSubmit()" class=@ClassNames("max-w-xl", apiResult.IsError ? " was-validated" : "")>
+    <ErrorSummary Status=@apiResult.ErrorStatus VisibleFields=@(new[]{ 
+        nameof(Register.DisplayName), nameof(Register.Email), nameof(Register.Password), nameof(Register.ConfirmPassword) }) />
+
+    <div class="mb-3 form-floating">
+        <input type="text" id="displayName" placeholder="Display Name" @bind-value="request.DisplayName" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Register.DisplayName)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Register.DisplayName)></ErrorField>
+        <label for="displayName">Your first and last name</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="email" id="email" placeholder="Enter email" @bind-value="request.Email" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Register.Email)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Register.Email)></ErrorField>
+        <label for="email">Email</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="password" id="password" placeholder="Password" @bind-value="request.Password" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Register.Password)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Register.Password)></ErrorField>
+        <label for="password">Password, 6 characters or more</label>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" @bind-value="request.ConfirmPassword" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Register.ConfirmPassword)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Register.ConfirmPassword)></ErrorField>
+        <label for="confirmPassword">Confirm Password</label>
+    </div>
+
+    <div class="form-check mb-4">
+      <input type="checkbox" class="form-check-input" id="autoLogin" @bind="request.AutoLogin">
+      <label class="form-check-label" for="autoLogin">
+        Auto Login
+      </label>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+    </div>
+</form>
+
+<div class="mt-5 flex">
+    <span class="me-2">Quick Links:</span>
+    <button class="ms-2 btn btn-outline-secondary" @onclick='_ => SetUser()'>new@user.com</button>
+</div>
+
+@code {
+    Register request = new() { AutoLogin = true };
+
+    ApiResult<RegisterResponse> apiResult = new();
+
+    void SetUser()
+    {
+        request.DisplayName = "New User";
+        request.Email = "new@user.com";
+        request.Password = request.ConfirmPassword = "p@55wOrd";
+        request.AutoLogin = true;
+    }
+
+    async Task OnSubmit()
+    {
+        apiResult.Reset();
+
+        if (request.Email.IsNullOrEmpty())
+            apiResult.AddFieldError(nameof(Register.Email), "Email is required");
+
+        if (request.Password.IsNullOrEmpty())
+            apiResult.AddFieldError(nameof(Register.Password), "Password is required");
+        else if (request.ConfirmPassword != request.Password)
+            apiResult.AddFieldError(nameof(Register.ConfirmPassword), "Passwords do not match");
+
+        if (apiResult.IsError) return;
+
+        apiResult = await ApiAsync(request);
+
+        if (apiResult.IsSuccess)
+        {
+            if (request.AutoLogin == true)
+            {
+                await authProvider.SignInAsync(apiResult.Response!);
+                NavigationManager.NavigateTo(NavigationManager.GetReturnUrl(), true);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin?return=" + NavigationManager.GetReturnUrl(), true);
+            }
+        }
+    }
+} 

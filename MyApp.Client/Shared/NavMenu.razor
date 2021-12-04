@@ -16,6 +16,11 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
+            <NavLink class="nav-link" href="/counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
             <NavLink class="nav-link" href="/todomvc">
                 <span class="oi oi-clipboard" aria-hidden="true"></span> Todos
             </NavLink>
@@ -31,11 +36,6 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
             <NavLink class="nav-link" href="/fetchdata">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
@@ -44,7 +44,7 @@
         @if (IsAuthenticated)
         {
             <li class="nav-item px-3">
-                <a href="#" class="nav-link" @onclick="LogoutAsync"><span class="oi oi-account-logout" aria-hidden="true"></span>Logout</a>
+                <a href="#" class="nav-link" @onclick="LogoutAsync" @onclick:preventDefault><span class="oi oi-account-logout" aria-hidden="true"></span>Logout</a>
             </li>
         }
         else
@@ -75,7 +75,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        LoginUrl = $"/login?return={NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}";
+        LoginUrl = $"/signin?return={NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}";
         return Task.CompletedTask;
     }
 
@@ -88,5 +88,6 @@
     private async Task LogoutAsync()
     {
         await AuthStateProvider.Logout();
+        NavigationManager.NavigateTo(LoginUrl ?? "/", true);
     }
 } 

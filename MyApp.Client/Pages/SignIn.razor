@@ -1,0 +1,71 @@
+@page "/signin"
+@inherits AuthComponentBase
+@inject ServiceStackStateProvider provider
+@inject NavigationManager NavigationManager;
+
+@if (IsAuthenticated)
+{
+    NavigationManager.NavigateTo(NavigationManager.GetReturnUrl(), true);
+    return;
+}
+
+<h1 class="fs-2 mb-3">Sign Up</h1>
+
+<form @onsubmit="_ => OnSubmit()" class=@ClassNames("max-w-xl", apiResult.IsError ? " was-validated" : "")>
+    <ErrorSummary Status=@apiResult.ErrorStatus 
+                    VisibleFields=@(new[]{ nameof(Authenticate.UserName), nameof(Authenticate.Password) })></ErrorSummary>
+    <div class="mb-3 form-floating">
+        <input type="email" id="userName" placeholder="Enter email" @bind-value="@Email" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.UserName)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Authenticate.UserName)></ErrorField>
+        <label for="userName">Email address</label>
+    </div>
+    <div class="mb-3 form-floating">
+        <input type="password" id="password" placeholder="Password" @bind-value="@Password" required
+                class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.Password)))>
+        <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Authenticate.Password)></ErrorField>
+        <label for="password">Password</label>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Login</button>
+        <NavLink href="/signup" class="btn btn-outline-primary">Register New User</NavLink>
+    </div>
+</form>
+
+<div class="mt-5 flex">
+    <span class="me-2">Quick Links:</span>
+    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("admin@localhost.local", "p@55wOrd")'>admin@localhost.local</button>
+    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("new@user.com", "p@55wOrd")'>new@user.com</button>
+</div>
+
+@code {
+    ApiResult<AuthenticateResponse> apiResult = new();
+
+    string Email { get; set; } = "";
+    string Password { get; set; } = "";
+
+    void SetUser(string email, string password)
+    {
+        Email = email;
+        Password = password;
+    }
+
+    async Task OnSubmit()
+    {
+        apiResult.Reset();
+
+        if (Email.IsNullOrEmpty())
+            apiResult.AddFieldError(nameof(Authenticate.UserName), "Email is required");
+
+        if (Password.IsNullOrEmpty())
+            apiResult.AddFieldError(nameof(Authenticate.Password), "Password is required");
+
+        if (apiResult.IsError) return;
+
+        apiResult = await provider.LoginAsync(Email, Password);
+
+        if (apiResult.IsSuccess)
+            NavigationManager.NavigateTo(NavigationManager.GetReturnUrl(), true);
+    }
+} 

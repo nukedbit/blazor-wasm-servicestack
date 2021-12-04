@@ -15,14 +15,21 @@ public static class AppExtensions
         return HttpUtility.ParseQueryString(query);
     }
 
-    public static string? QueryString(this NavigationManager navigationManager, string key)
+    public static string? QueryString(this NavigationManager navigationManager, string key) =>
+        navigationManager.QueryString()[key];
+
+    public static string GetReturnUrl(this NavigationManager navigationManager)
     {
-        return navigationManager.QueryString()[key];
+        var returnUrl = navigationManager.QueryString("return");
+        if (returnUrl == null || returnUrl.IsEmpty())
+            return "/";
+        return returnUrl;
     }
 
-    public static string InvalidClass<T>(this ApiResult<T> apiResult, string fieldName) => 
+    public static string InvalidClass<T>(this ApiResult<T> apiResult, string fieldName) =>
         apiResult.ErrorStatus.InvalidClass(fieldName);
 
     public static string InvalidClass(this ResponseStatus? status, string fieldName) =>
         CssUtils.Bootstrap.InvalidClass(status, fieldName);
+
 }

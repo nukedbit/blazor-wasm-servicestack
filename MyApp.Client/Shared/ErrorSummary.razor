@@ -1,6 +1,7 @@
 ﻿@if (Status.ShowSummary(VisibleFields ?? Array.Empty<string>()))
 {
-    <div class=@CssUtils.ClassNames("mb-3 alert alert-danger", @class) role="alert">
+    <div class=@CssUtils.ClassNames("mt-2 mb-3 alert alert-danger", @class) role="alert">
+        <span class="oi oi-warning me-2"></span>
         @Status.SummaryMessage(VisibleFields ?? Array.Empty<string>())
     </div>
 }

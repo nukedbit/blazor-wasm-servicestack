@@ -9,7 +9,7 @@ public class TodosServices : Service
 {
     public IAutoQueryData AutoQuery { get; set; }
 
-    public static PocoDataSource<Todo> Todos = PocoDataSource.Create(new Todo[]
+    static readonly PocoDataSource<Todo> Todos = PocoDataSource.Create(new Todo[]
     {
         new () { Id = 1, Text = "Learn" },
         new () { Id = 2, Text = "Blazor", IsFinished = true },

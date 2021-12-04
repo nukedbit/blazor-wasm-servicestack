@@ -37,17 +37,18 @@ public class ConfigureAuthRepository : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
         .ConfigureServices(services => services.AddSingleton<IAuthRepository>(c =>
-            new OrmLiteAuthRepository<AppUser, UserAuthDetails>(c.Resolve<IDbConnectionFactory>())
-            {
+            new OrmLiteAuthRepository<AppUser, UserAuthDetails>(c.Resolve<IDbConnectionFactory>()) {
                 UseDistinctRoleTables = true
             }))
-        .ConfigureAppHost(appHost =>
-        {
+        .ConfigureAppHost(appHost => {
             var authRepo = appHost.Resolve<IAuthRepository>();
             authRepo.InitSchema();
             CreateUser(authRepo, "admin@localhost.local", "Admin User", "p@55wOrd", roles: new[] { RoleNames.Admin });
-        }, afterConfigure: appHost =>
-        {
+
+            // Uncomment to enable Admin Users UI in Studio: https://docs.servicestack.net/studio-users
+            // appHost.Plugins.Add(new ServiceStack.Admin.AdminUsersFeature());
+        },
+        afterConfigure: appHost => {
             appHost.AssertPlugin<AuthFeature>().AuthEvents.Add(new AppUserAuthEvents());
         });
 

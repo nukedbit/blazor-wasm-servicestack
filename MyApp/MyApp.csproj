@@ -11,7 +11,7 @@
         <PackageReference Include="ServiceStack" Version="5.*" />
         <PackageReference Include="ServiceStack.Extensions" Version="5.*" />
         <PackageReference Include="ServiceStack.OrmLite.Sqlite.Data" Version="5.*" />
-        <PackageReference Include="ServiceStack.Server" Version="5.*" />
+        <PackageReference Include="ServiceStack.Server" Version="5.13.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -25,34 +25,22 @@
         <Exec Command="echo DEPLOY_API=$(DEPLOY_API)" />
 
         <!-- Update Production settings with DEPLOY_API Blazor UI should use  -->
-        <WriteLinesToFile
-            File="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/appsettings.Production.json"
-            Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/appsettings.Production.json).Replace('{DEPLOY_API}',$(DEPLOY_API)))"
-            Overwrite="true"
-            Encoding="UTF-8"/>
+        <WriteLinesToFile File="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/appsettings.Production.json" Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/appsettings.Production.json).Replace('{DEPLOY_API}',$(DEPLOY_API)))" Overwrite="true" Encoding="UTF-8" />
 
         <!-- 404.html SPA fallback (supported by GitHub Pages, Cloudflare & Netlify CDNs) -->
-        <Copy SourceFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/index.html"
-              DestinationFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/404.html" />
+        <Copy SourceFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/index.html" DestinationFiles="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/404.html" />
 
         <!-- define /api proxy routes (supported by Cloudflare or Netlify CDNs)  -->
-        <WriteLinesToFile File="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects"
-            Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects).Replace('{DEPLOY_API}',$(DEPLOY_API)))"
-            Overwrite="true"
-            Encoding="UTF-8"/>
+        <WriteLinesToFile File="$(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects" Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/_redirects).Replace('{DEPLOY_API}',$(DEPLOY_API)))" Overwrite="true" Encoding="UTF-8" />
     </Target>
     <Target Name="DEPLOY_ACTION_CDN" AfterTargets="Build" Condition="$(DEPLOY_CDN) != ''">
         <Exec Command="echo DEPLOY_CDN=$(DEPLOY_CDN)" />
 
         <!-- Define custom domain name that CDN should use -->
-        <Exec Condition="$(DEPLOY_CDN) != ''" Command="echo $(DEPLOY_CDN) > $(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/CNAME" />
+        <Exec Condition="$(DEPLOY_CDN) != ''" Command="echo $(DEPLOY_CDN) &gt; $(MSBuildProjectDirectory)/../MyApp.Client/wwwroot/CNAME" />
 
         <!-- Allow CORS from DEPLOY_CDN -->
-        <WriteLinesToFile
-            File="$(MSBuildProjectDirectory)/Configure.AppHost.cs"
-            Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/Configure.AppHost.cs).Replace('{DEPLOY_CDN}',$(DEPLOY_CDN)))"
-            Overwrite="true"
-            Encoding="UTF-8"/>
+        <WriteLinesToFile File="$(MSBuildProjectDirectory)/Configure.AppHost.cs" Lines="$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/Configure.AppHost.cs).Replace('{DEPLOY_CDN}',$(DEPLOY_CDN)))" Overwrite="true" Encoding="UTF-8" />
     </Target>
 
 </Project>
