@@ -7,22 +7,19 @@
 <div class="container">
     <div class="row">
         <form submit=false class=@ClassNames("col-sm-6", apiResult.IsError ? " was-validated" : "")>
-            @if (apiResult.ErrorSummary != null)
-            {
-                <div class="mb-3 alert alert-danger" role="alert">@apiResult.ErrorSummary</div>
-            }
-
+            <ErrorSummary Status=@apiResult.ErrorStatus 
+                          VisibleFields=@(new[]{ nameof(Authenticate.UserName), nameof(Authenticate.Password) })></ErrorSummary>
             <div class="mb-3">
                 <label for="userName">Email address</label>
                 <input type="email" id="userName" placeholder="Enter email" @bind-value="@Email" required
                        class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.UserName)))>
-                <div class="invalid-feedback">@(apiResult.FieldErrorMessage(nameof(Authenticate.UserName)))</div>
+                <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Authenticate.UserName)></ErrorField>
             </div>
             <div class="mb-3">
                 <label for="password">Password</label>
                 <input type="password" id="password" placeholder="Password" @bind-value="@Password" required
                        class=@ClassNames("form-control", apiResult.InvalidClass(nameof(Authenticate.Password)))>
-                <div class="invalid-feedback">@(apiResult.FieldErrorMessage(nameof(Authenticate.Password)))</div>
+                <ErrorField Status=@apiResult.ErrorStatus Name=@nameof(Authenticate.Password)></ErrorField>
             </div>
 
             <button type="submit" class="mb-3 btn btn-primary" @onclick:preventDefault @onclick="LoginAsync">Login</button>
@@ -30,7 +27,7 @@
 
         <div class="mt-4">
             Quick Link:
-            <button class="btn btn-secondary" @onclick='e => SetUser("admin@localhost.local", "p@55wOrd")'>admin@localhost.local</button>
+            <button class="ms-2 btn btn-secondary" @onclick='e => SetUser("admin@localhost.local", "p@55wOrd")'>admin@localhost.local</button>
         </div>
     </div>
 </div>

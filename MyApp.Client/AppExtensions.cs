@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Components;
 using ServiceStack;
@@ -21,7 +20,9 @@ public static class AppExtensions
         return navigationManager.QueryString()[key];
     }
 
-    public static string InvalidClass<T>(this ApiResult<T> apiResult, string fieldName) => apiResult.HasFieldError(fieldName)
-        ? "is-invalid"
-        : "";
+    public static string InvalidClass<T>(this ApiResult<T> apiResult, string fieldName) => 
+        apiResult.ErrorStatus.InvalidClass(fieldName);
+
+    public static string InvalidClass(this ResponseStatus? status, string fieldName) =>
+        CssUtils.Bootstrap.InvalidClass(status, fieldName);
 }

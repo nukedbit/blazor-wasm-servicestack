@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -35,18 +34,5 @@ public abstract class StackBaseComponent : ComponentBase
     protected async Task<TResponse> SendAsync<TResponse>(IReturn<TResponse> request) =>
         await (await GetClientAsync()).SendAsync(request);
 
-    public static string ClassNames(params string[] classes)
-    {
-        var sb = new StringBuilder();
-        foreach (var cls in classes)
-        {
-            if (cls.IsNullOrEmpty())
-                continue;
-
-            if (sb.Length > 0)
-                sb.Append(' ');
-            sb.Append(cls);
-        }
-        return sb.ToString();
-    }
+    public static string ClassNames(params string[] classes) => CssUtils.ClassNames(classes);
 }

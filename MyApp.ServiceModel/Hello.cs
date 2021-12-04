@@ -18,4 +18,5 @@ public class HelloSecure : IReturn<HelloResponse>
 public class HelloResponse
 {
     public string Result { get; set; }
+    public ResponseStatus ResponseStatus { get; set; }
 }

@@ -1,0 +1,16 @@
+﻿@if (Status.ShowSummary(VisibleFields ?? Array.Empty<string>()))
+{
+    <div class=@CssUtils.ClassNames("mb-3 alert alert-danger", @class) role="alert">
+        @Status.SummaryMessage(VisibleFields ?? Array.Empty<string>())
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? @class { get; set; }
+    [Parameter]
+    public string[]? VisibleFields { get; set; }
+
+    [Parameter, EditorRequired]
+    public ResponseStatus? Status { get; set; }
+}
