@@ -7,6 +7,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
+using ServiceStack.Blazor;
 
 namespace MyApp.Client;
 
@@ -37,13 +38,13 @@ public class ServiceStackStateProvider : AuthenticationStateProvider
     public const string CacheKey = nameof(AuthenticateResponse);
 
     private ApiResult<AuthenticateResponse> authResult = new();
-    private readonly JsonHttpClient client;
+    private readonly JsonApiClient client;
 
     ILocalStorageService LocalStorage { get; set; }
 
     ILogger<ServiceStackStateProvider> Log { get; }
 
-    public ServiceStackStateProvider(JsonHttpClient client, ILocalStorageService localStorage, ILogger<ServiceStackStateProvider> log)
+    public ServiceStackStateProvider(JsonApiClient client, ILocalStorageService localStorage, ILogger<ServiceStackStateProvider> log)
     {
         this.client = client;
         this.LocalStorage = localStorage;

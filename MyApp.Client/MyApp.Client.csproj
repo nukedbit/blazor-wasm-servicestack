@@ -4,9 +4,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ServiceStack.HttpClient" Version="5.*" />
+        <PackageReference Include="ServiceStack.Blazor" Version="5.*" />
         <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
         <PackageReference Include="Blazor.Extensions.Logging" Version="2.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />

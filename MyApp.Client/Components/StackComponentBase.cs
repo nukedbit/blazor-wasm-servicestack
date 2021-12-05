@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using ServiceStack;
@@ -7,7 +8,7 @@ namespace MyApp.Client;
 public abstract class StackComponentBase : ComponentBase
 {
     [Inject]
-    protected JsonHttpClient? Client { get; set; }
+    protected JsonApiClient? Client { get; set; }
 
     protected async Task<ApiResult<TResponse>> ApiAsync<TResponse>(IReturn<TResponse> request) =>
         await Client!.ApiAsync(request);
