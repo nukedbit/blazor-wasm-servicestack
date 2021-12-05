@@ -67,7 +67,7 @@
     </div>
 
     <div class="d-flex justify-content-between">
-        <button class="btn btn-outline-primary" @onclick=@(async () => { await close.InvokeAsync(); })>Close</button>
+        <button type="button" class="btn btn-outline-primary" @onclick=@(async () => { await close.InvokeAsync(); })>Close</button>
 
         <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.Client/Pages/BookingsCrud/Update.razor" class="mt-2">
             <img src="/img/blazor.svg" class="w-5 h-5 inline-flex text-purple-800 me-1">Update.razor</a>

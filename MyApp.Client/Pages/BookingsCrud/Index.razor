@@ -23,15 +23,16 @@ else
 @if (apiResult.IsSuccess && apiResult.Response!.Results?.Count > 0)
 {
     <div class="shadow-sm p1 mt-4">
-    <table class="table table-striped">
+    <table class="table table-striped align-middle">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
+                <th class="d-none d-sm-table-cell">Name</th>
                 <th>RoomType</th>
                 <th>Room No</th>
-                <th>Start Date</th>
                 <th>Cost</th>
+                <th class="d-none d-sm-table-cell">Start Date</th>
+                <th class="d-none d-sm-table-cell">Created By</th>
             </tr>
         </thead>
         <tbody>
@@ -39,11 +40,12 @@ else
             {
                 <tr @key=@booking.Id>
                     <td>@booking.Id</td>
-                    <td>@booking.Name</td>
+                    <td class="d-none d-sm-table-cell">@booking.Name</td>
                     <td>@booking.RoomType</td>
                     <td>@booking.RoomNumber</td>
-                    <td>@booking.BookingStartDate.ToShortDateString()</td>
                     <td>@($"{booking.Cost:C}")</td>
+                    <td class="d-none d-sm-table-cell">@booking.BookingStartDate.ToShortDateString()</td>
+                    <td class="d-none d-sm-table-cell">@booking.CreatedBy</td>
                     <td>
                         <button class="btn btn-outline-success" @onclick=@(() => updateId = booking.Id)>Edit</button>
                         <button class="btn btn-danger" @onclick="@(() => delete(booking.Id))">Delete</button>
@@ -53,6 +55,9 @@ else
         </tbody>
     </table>
     </div>
+
+    <ErrorSummary Status=@deleteApiResult.ErrorStatus />
+
 }
 else if (!apiResult.Completed)
 {
@@ -61,7 +66,7 @@ else if (!apiResult.Completed)
 
 <div class="mt-5 text-gray-400 flex justify-center">
     <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.ServiceModel/Bookings.cs" class="mx-2">
-        <span class="oi oi-code w-5 h-5 inline-flex text-red-800 me-1"></span>Bookings.cs</a>
+        <span class="oi oi-code w-5 h-5 inline-flex text-red-800 align-text-top me-1"></span>Bookings.cs</a>
     <a href="https://github.com/ServiceStackApps/blazor-wasm-servicestack/blob/master/MyApp.Client/Pages/BookingsCrud/Index.razor" class="mx-2">
         <img src="/img/blazor.svg" class="w-5 h-5 inline-flex text-purple-800 me-1">Index.razor</a>
 </div>
@@ -80,6 +85,7 @@ else if (!apiResult.Completed)
 
     async Task onDone(IdResponse result)
     {
+        deleteApiResult.Reset();
         showCreate = false;
         updateId = null;
         await refresh();
@@ -91,6 +97,6 @@ else if (!apiResult.Completed)
     {
         deleteApiResult = await ApiAsync(new DeleteBooking { Id = id });
         if (deleteApiResult.IsSuccess)
-            await refresh();            
+            await refresh();
     }
 }
