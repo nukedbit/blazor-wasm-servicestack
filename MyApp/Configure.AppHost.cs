@@ -10,8 +10,6 @@ public class AppHost : AppHostBase
 
     public override void Configure(Container container)
     {
-        RawHttpHandlers.Add(ApiHandlers.Json("/api/{Request}"));
-
         SetConfig(new HostConfig
         {
         });
