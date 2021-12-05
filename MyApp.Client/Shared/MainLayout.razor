@@ -10,7 +10,18 @@
         <div class="top-row px-4">
             @if (AuthState.IsAuthenticated())
             {
-                <span>@AuthState.AuthenticatedUser()!.GetDisplayName()</span>
+                var authUser = AuthState.AuthenticatedUser()!;
+
+                <span class="me-3">@authUser.GetDisplayName()</span>
+
+                var roles = authUser.GetRoles();
+                @if (roles.Length > 0)
+                {
+                    @foreach (var role in roles)
+                    {
+                        <small title="Admin" class="px-2 py-sm-1 me-1 bg-success bg-gradient text-white rounded">@role</small>
+                    }
+                }
             }
             <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
         </div>

@@ -1,7 +1,7 @@
 @page "/signin"
 @inherits AuthComponentBase
 @inject ServiceStackStateProvider provider
-@inject NavigationManager NavigationManager;
+@inject NavigationManager NavigationManager
 
 @if (IsAuthenticated)
 {
@@ -35,7 +35,9 @@
 
 <div class="mt-5 flex">
     <span class="me-2">Quick Links:</span>
-    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("admin@localhost.local", "p@55wOrd")'>admin@localhost.local</button>
+    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("admin@email.com", "p@55wOrd")'>admin@email.com</button>
+    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("manager@email.com", "p@55wOrd")'>manager@email.com</button>
+    <button class="btn btn-outline-secondary" @onclick='_ => SetUser("employee@email.com", "p@55wOrd")'>employee@email.com</button>
     <button class="btn btn-outline-secondary" @onclick='_ => SetUser("new@user.com", "p@55wOrd")'>new@user.com</button>
 </div>
 
