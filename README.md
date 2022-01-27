@@ -1,3 +1,9 @@
+> This template is now unmantained, ServiceStack as released a new Officially supported template with a better native integration check it out
+[ServiceStack v6 Release Notes](https://docs.servicestack.net/releases/v6#blazor-webassembly)
+
+
+
+
 [![](blazor-wasm-servicestack.png)](https://github.com/nukedbit/blazor-wasm-servicestack)
 
 # Blazor WASM & ServiceStack for .NET 6.0 RTM
